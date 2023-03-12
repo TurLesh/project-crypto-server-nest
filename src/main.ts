@@ -13,7 +13,7 @@ async function start() {
     const config = new DocumentBuilder()
         .setTitle('REST API used for auth actions in "project-crypto"')
         .setDescription('REST API documentation')
-        .setVersion('1.0.0')
+        .setVersion('1.0.1')
         .addTag('Lesh')
         .build();
     const document = SwaggerModule.createDocument(app, config);

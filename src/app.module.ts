@@ -11,7 +11,9 @@ import { PostsModule } from './posts/posts.module';
 import { PostModel } from './posts/posts.model';
 import { FilesModule } from './files/files.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { WatchlistModule } from './watchlist/watchlist.module';
 import * as path from 'path';
+import { Watchlist } from './watchlist/wathclist.model';
 
 @Module({
     controllers: [],
@@ -30,14 +32,15 @@ import * as path from 'path';
             username: process.env.POSTGRES_USER,
             password: process.env.POSTGRES_PASSWORD,
             database: process.env.POSTGRES_DB,
-            models: [User, Role, UserRoles, PostModel],
+            models: [User, Role, UserRoles, PostModel, Watchlist],
             autoLoadModels: true
         }),
         UsersModule,
         RolesModule,
         AuthModule,
         PostsModule,
-        FilesModule
+        FilesModule,
+        WatchlistModule
     ]
 })
 export class AppModule {}

@@ -22,7 +22,7 @@ export class RolesController {
     }
 
     // swagger docs block starts here //
-    @ApiOperation({ summary: 'Get role data by /:ROLE' })
+    @ApiOperation({ summary: 'Get role data by role name (/:ROLE)' })
     @ApiResponse({ status: 200, type: Role })
     // swagger docs block ends here //
     @Get('/:value')
