@@ -3,11 +3,11 @@ import { ApiProperty } from '@nestjs/swagger/dist/decorators';
 
 interface WatchlistCreationAttrs {
     userId: number;
-    items: string;
+    items: string[];
 }
 
 @Table({ tableName: 'watchlist' })
-export class Watchlist extends Model<Watchlist> {
+export class Watchlist extends Model<Watchlist, WatchlistCreationAttrs> {
     // swagger docs block starts here //
     @ApiProperty({ example: '1', description: 'Unique user id' })
     // swagger docs block ends here //

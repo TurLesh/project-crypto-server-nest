@@ -4,16 +4,33 @@ import { HttpException, UnauthorizedException } from '@nestjs/common/exceptions'
 import { JwtService } from '@nestjs/jwt/dist';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
+import { TokenService } from 'src/token/token.service';
 import * as bcrypt from 'bcryptjs';
 import { User } from 'src/users/users.model';
 
 @Injectable()
 export class AuthService {
-    constructor(private userService: UsersService, private jwtService: JwtService) {}
+    constructor(
+        private userService: UsersService,
+        private jwtService: JwtService,
+        private tokenService: TokenService
+    ) {}
 
     async login(userDto: CreateUserDto) {
         const user = await this.validateUser(userDto);
-        return this.generateToken(user);
+        const token = await this.generateToken(user);
+        const userIdAndToken = {
+            userId: user.id,
+            token: token
+        };
+        await this.tokenService.setToken(userIdAndToken);
+        return {
+            token: token,
+            user: {
+                id: user.id,
+                email: user.email
+            }
+        };
     }
 
     async registration(userDto: CreateUserDto) {
@@ -23,18 +40,41 @@ export class AuthService {
         }
         const hashPassword = await bcrypt.hash(userDto.password, 5);
         const user = await this.userService.createUser({ ...userDto, password: hashPassword });
-        return this.generateToken(user);
+        const token = await this.generateToken(user);
+        const userIdAndToken = {
+            userId: user.id,
+            token: token
+        };
+        await this.tokenService.setToken(userIdAndToken);
+        return {
+            token: token,
+            user: {
+                id: user.id,
+                email: user.email
+            }
+        };
+    }
+
+    async check(token: string) {
+        const candidateId = await this.tokenService.getUserIdbyToken(token);
+        const user = await this.userService.getUserById(candidateId);
+        if (!user) {
+            throw new HttpException('User with this id not found', HttpStatus.NOT_FOUND);
+        }
+        return user;
     }
 
     private async generateToken(user: User) {
         const payload = { email: user.email, id: user.id, roles: user.roles };
-        return {
-            token: this.jwtService.sign(payload)
-        };
+        const token = this.jwtService.sign(payload);
+        return token;
     }
 
     private async validateUser(userDto: CreateUserDto) {
         const user = await this.userService.getUserByEmail(userDto.email);
+        if (!user) {
+            throw new HttpException('User with this email not found', HttpStatus.NOT_FOUND);
+        }
         const passwordEquals = await bcrypt.compare(userDto.password, user.password);
         if (user && passwordEquals) {
             return user;

@@ -14,6 +14,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { WatchlistModule } from './watchlist/watchlist.module';
 import * as path from 'path';
 import { Watchlist } from './watchlist/wathclist.model';
+import { TokenModule } from './token/token.module';
 
 @Module({
     controllers: [],
@@ -40,7 +41,8 @@ import { Watchlist } from './watchlist/wathclist.model';
         AuthModule,
         PostsModule,
         FilesModule,
-        WatchlistModule
+        WatchlistModule,
+        TokenModule
     ]
 })
 export class AppModule {}

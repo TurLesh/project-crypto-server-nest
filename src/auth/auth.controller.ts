@@ -3,6 +3,8 @@ import { ApiTags } from '@nestjs/swagger/dist/decorators/api-use-tags.decorator'
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AuthService } from './auth.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger/dist';
+import { TokenDto } from 'src/token/dto/add-user-token';
+import { User } from 'src/users/users.model';
 
 // swagger docs block starts here //
 @ApiTags('Auth')
@@ -27,5 +29,16 @@ export class AuthController {
     @Post('/registration')
     registration(@Body() userDto: CreateUserDto) {
         return this.authService.registration(userDto);
+    }
+
+    // swagger docs block starts here //
+    @ApiOperation({ summary: 'Get user by token' })
+    @ApiResponse({ status: 200, type: User, description: 'Token found -> user data successfully returned' })
+    @ApiResponse({ status: 400, description: 'token must be a string' })
+    @ApiResponse({ status: 404, description: 'User with this token not found' })
+    // swagger docs block ends here //
+    @Post('/check')
+    check(@Body() tokenObj: TokenDto) {
+        return this.authService.check(tokenObj.token);
     }
 }

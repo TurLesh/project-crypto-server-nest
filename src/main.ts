@@ -25,7 +25,7 @@ async function start() {
 
     //set validation pipe for all endpoints
     app.useGlobalPipes(new ValidationPipe());
-
+    app.enableCors();
     await app.listen(PORT, () => console.log(`Server started on port = ${PORT}`));
 }
 
