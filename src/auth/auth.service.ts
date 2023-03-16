@@ -56,6 +56,11 @@ export class AuthService {
     }
 
     async check(token: string) {
+        try {
+            await this.jwtService.verify(token);
+        } catch (error) {
+            throw new UnauthorizedException({ message: 'Token expired' });
+        }
         const candidateId = await this.tokenService.getUserIdbyToken(token);
         const user = await this.userService.getUserById(candidateId);
         if (!user) {

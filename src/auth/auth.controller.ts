@@ -35,6 +35,7 @@ export class AuthController {
     @ApiOperation({ summary: 'Get user by token' })
     @ApiResponse({ status: 200, type: User, description: 'Token found -> user data successfully returned' })
     @ApiResponse({ status: 400, description: 'token must be a string' })
+    @ApiResponse({ status: 401, description: 'Token expired' })
     @ApiResponse({ status: 404, description: 'User with this token not found' })
     // swagger docs block ends here //
     @Post('/check')
