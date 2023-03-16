@@ -5,6 +5,11 @@ import { WatchlistService } from './watchlist.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger/dist';
 import { Watchlist } from './wathclist.model';
 
+interface IAddItem {
+    userId: number;
+    item: string;
+}
+
 // swagger docs block starts here //
 @ApiTags('Watchlist')
 // swagger docs block ends here //
@@ -26,7 +31,16 @@ export class WatchlistController {
     @ApiResponse({ status: 201, type: Watchlist })
     // swagger docs block ends here //
     @Post('/set')
-    addToWatchlist(@Body() addToWatchlistDto: addToWatchlistDto) {
-        return this.watchlistService.addToWatchlist(addToWatchlistDto);
+    setWatchlist(@Body() addToWatchlistDto: addToWatchlistDto) {
+        return this.watchlistService.setWatchlist(addToWatchlistDto);
+    }
+
+    // swagger docs block starts here //
+    @ApiOperation({ summary: 'Add one item to user`s watchlist by id' })
+    @ApiResponse({ status: 201 })
+    // swagger docs block ends here //
+    @Post('/add-item')
+    addItemById(@Body() addItemObj: IAddItem) {
+        return this.watchlistService.addItemById(addItemObj);
     }
 }

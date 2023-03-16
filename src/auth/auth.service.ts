@@ -7,13 +7,15 @@ import { UsersService } from 'src/users/users.service';
 import { TokenService } from 'src/token/token.service';
 import * as bcrypt from 'bcryptjs';
 import { User } from 'src/users/users.model';
+import { WatchlistService } from 'src/watchlist/watchlist.service';
 
 @Injectable()
 export class AuthService {
     constructor(
         private userService: UsersService,
         private jwtService: JwtService,
-        private tokenService: TokenService
+        private tokenService: TokenService,
+        private watchlistService: WatchlistService
     ) {}
 
     async login(userDto: CreateUserDto) {
@@ -24,12 +26,14 @@ export class AuthService {
             token: token
         };
         await this.tokenService.setToken(userIdAndToken);
+        const watchlist = await this.watchlistService.getWatchlist(user.id);
         return {
             token: token,
             user: {
                 id: user.id,
                 email: user.email
-            }
+            },
+            watchlist: watchlist
         };
     }
 
@@ -46,6 +50,11 @@ export class AuthService {
             token: token
         };
         await this.tokenService.setToken(userIdAndToken);
+        const watchlistInitObj = {
+            userId: user.id,
+            items: []
+        };
+        await this.watchlistService.initWatchlist(watchlistInitObj);
         return {
             token: token,
             user: {

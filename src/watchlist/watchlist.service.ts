@@ -13,10 +13,10 @@ export class WatchlistService {
         if (!watchlist) {
             throw new HttpException('Watchlist for this user not found', HttpStatus.NOT_FOUND);
         }
-        return watchlist;
+        return watchlist.items;
     }
 
-    async addToWatchlist(addToWatchlistDto: addToWatchlistDto) {
+    async setWatchlist(addToWatchlistDto: addToWatchlistDto) {
         const userWatchlist = await this.watchlistRepository.findByPk(addToWatchlistDto.userId);
         if (userWatchlist) {
             userWatchlist.items = addToWatchlistDto.items;
@@ -26,5 +26,20 @@ export class WatchlistService {
             const userWatchlistCreate = await this.watchlistRepository.create(addToWatchlistDto);
             return userWatchlistCreate;
         }
+    }
+
+    async initWatchlist(addToWatchlistDto: addToWatchlistDto) {
+        const userWatchlistCreate = await this.watchlistRepository.create(addToWatchlistDto);
+        return userWatchlistCreate;
+    }
+
+    async addItemById({ userId, item }) {
+        const watchlistObj = await this.watchlistRepository.findByPk(userId);
+        if (!watchlistObj) {
+            throw new HttpException('Watchlist for this user not found', HttpStatus.NOT_FOUND);
+        }
+        watchlistObj.items = [...watchlistObj.items, item];
+        await watchlistObj.save();
+        return watchlistObj;
     }
 }
