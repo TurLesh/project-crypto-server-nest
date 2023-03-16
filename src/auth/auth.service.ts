@@ -75,7 +75,11 @@ export class AuthService {
         if (!user) {
             throw new HttpException('User with this id not found', HttpStatus.NOT_FOUND);
         }
-        return user;
+        const watchlist = await this.watchlistService.getWatchlist(user.id);
+        return {
+            user: user,
+            watchlist: watchlist
+        };
     }
 
     private async generateToken(user: User) {
