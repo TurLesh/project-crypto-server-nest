@@ -5,7 +5,7 @@ import { WatchlistService } from './watchlist.service';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger/dist';
 import { Watchlist } from './wathclist.model';
 
-interface IAddItem {
+interface IOneItemActions {
     userId: number;
     item: string;
 }
@@ -36,11 +36,20 @@ export class WatchlistController {
     }
 
     // swagger docs block starts here //
-    @ApiOperation({ summary: 'Add one item to user`s watchlist by id' })
+    @ApiOperation({ summary: 'Add one item to user`s watchlist by userId and item name' })
     @ApiResponse({ status: 201 })
     // swagger docs block ends here //
     @Post('/add-item')
-    addItemById(@Body() addItemObj: IAddItem) {
+    addItemById(@Body() addItemObj: IOneItemActions) {
         return this.watchlistService.addItemById(addItemObj);
+    }
+
+    // swagger docs block starts here //
+    @ApiOperation({ summary: 'Remove one item from user`s watchlist by userId and item name' })
+    @ApiResponse({ status: 201 })
+    // swagger docs block ends here //
+    @Post('/remove-item')
+    removeItemById(@Body() removeItemObj: IOneItemActions) {
+        return this.watchlistService.removeItemById(removeItemObj);
     }
 }

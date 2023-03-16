@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Watchlist } from './wathclist.model';
 import { HttpException } from '@nestjs/common/exceptions';
 import { HttpStatus } from '@nestjs/common/enums';
+import _ = require('lodash');
 
 @Injectable()
 export class WatchlistService {
@@ -39,6 +40,16 @@ export class WatchlistService {
             throw new HttpException('Watchlist for this user not found', HttpStatus.NOT_FOUND);
         }
         watchlistObj.items = [...watchlistObj.items, item];
+        await watchlistObj.save();
+        return watchlistObj;
+    }
+
+    async removeItemById({ userId, item }) {
+        const watchlistObj = await this.watchlistRepository.findByPk(userId);
+        if (!watchlistObj) {
+            throw new HttpException('Watchlist for this user not found', HttpStatus.NOT_FOUND);
+        }
+        watchlistObj.items = _.pull([...watchlistObj.items], item);
         await watchlistObj.save();
         return watchlistObj;
     }
